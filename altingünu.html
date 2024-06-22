@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="manifest" href="manifest.json">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Altın Günü Dağıtım Uygulaması</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px; /* Maksimum genişlik ayarı */
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input, select, button {
+            display: block;
+            width: calc(100% - 20px);
+            margin: 10px auto;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        h4 {
+            text-align: center;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        @media (max-width: 600px) {
+            /* Küçük ekranlar için özel CSS */
+            .container {
+                padding: 10px;
+            }
+            input, select, button {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <form id="frm">
+        <div class="container">
+            <h4>ALTIN GÜNÜ DAĞITIM UYGULAMASI</h4>
+            <input type="number" id="kisi" min="2" placeholder="Kişi sayısını giriniz." />
+            <select id="ay">
+                <option value="0">Ocak</option>
+                <option value="1">Şubat</option>
+                <option value="2">Mart</option>
+                <option value="3">Nisan</option>
+                <option value="4">Mayıs</option>
+                <option value="5">Haziran</option>
+                <option value="6">Temmuz</option>
+                <option value="7">Ağustos</option>
+                <option value="8">Eylül</option>
+                <option value="9">Ekim</option>
+                <option value="10">Kasım</option>
+                <option value="11">Aralık</option>
+            </select>
+            <button id="butonum">Oluştur</button>
+        </div>
+        <div class="container">
+            
+            <table id="myTable">
+                
+                <thead>
+                    <tr>
+                     
+                       
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </form>
+    <script>
+        
+
+        const buton = document.getElementById('butonum');
+
+        buton.addEventListener("click", dene);
+        let isimler = [];
+
+        function dene(event) {
+            event.preventDefault();
+            let kisiAdet = document.getElementById("kisi").value;
+            let secilenAy = document.getElementById("ay").value;
+            const table = document.getElementById("myTable").getElementsByTagName('tbody')[0];
+            table.innerHTML = ''; // Tabloyu temizlemek için
+         
+            for (let i = 1; i <= parseInt(kisiAdet); i++) {
+                let newRow = document.createElement('tr');
+                let cell = document.createElement('td');
+                let inputt = document.createElement('input');
+                inputt.type = 'text';
+                inputt.classList.add('isimInput');
+                inputt.placeholder = 'Katılımcının adı-soyadı';
+                cell.appendChild(inputt);
+                newRow.appendChild(cell);
+                table.appendChild(newRow);
+            }
+
+            let buttonRow = document.createElement('tr');
+            let buttonCell = document.createElement('td');
+            let newButton = document.createElement('button');
+            newButton.textContent = 'Dağıt';
+            newButton.id = 'kaydetButon';
+            buttonCell.appendChild(newButton);
+            buttonRow.appendChild(buttonCell);
+            table.appendChild(buttonRow);
+
+            newButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                let yeniDizi = ayDizisiniYenidenYapilandir(secilenAy, kisiAdet);
+             
+                const inputs = document.querySelectorAll('.isimInput');
+                isimler.length = 0; // Diziyi temizle
+                inputs.forEach(input => {
+                    if (input.value) {
+                        isimler.push(input.value);
+                    }
+                });
+
+                if (isimler.length === parseInt(kisiAdet) && yeniDizi.length === parseInt(kisiAdet)) {
+                    // İsimler dizisini rastgele sırala
+                    shuffleArray(isimler);
+                    
+                    const resultTable = document.createElement('table');
+                    resultTable.style.marginTop = '20px';
+
+                    // Eşleştirilmiş isim ve ayları yazdır
+                    isimler.forEach((isim, index) => {
+                        let resultRow = document.createElement('tr');
+                        let nameCell = document.createElement('td');
+                        let monthCell = document.createElement('td');
+                        nameCell.textContent = isim;
+                        monthCell.textContent = yeniDizi[index];
+                        resultRow.appendChild(nameCell);
+                        resultRow.appendChild(monthCell);
+                        resultTable.appendChild(resultRow);
+                    });
+                    table.parentElement.appendChild(resultTable);
+                } else {
+                    console.log('Kişi sayısı ve ay sayısı eşleşmiyor.');
+                }
+            });
+
+            const aylar = [
+                "Ocak", 
+                "Şubat", 
+                "Mart", 
+                "Nisan", 
+                "Mayıs", 
+                "Haziran", 
+                "Temmuz", 
+                "Ağustos", 
+                "Eylül", 
+                "Ekim", 
+                "Kasım", 
+                "Aralık"
+            ];
+
+            function ayDizisiniYenidenYapilandir(secilenAyIndex, kisiSayisi) {
+                secilenAyIndex = parseInt(secilenAyIndex);
+                if (secilenAyIndex < 0 || secilenAyIndex >= aylar.length) {
+                    console.log("Geçersiz ay indeksi.");
+                    return [];
+                }
+                // Yeni dizi oluşturmak için slice metodunu kullan
+                const yeniDizi = aylar.slice(secilenAyIndex).concat(aylar.slice(0, secilenAyIndex)).slice(0, kisiSayisi);
+                return yeniDizi;
+            }
+
+            // Diziyi rastgele sıralayan fonksiyon
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            }
+        }
+    </script>
+
+<script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+          console.log('Service Worker registered with scope:', registration.scope);
+        }, function(err) {
+          console.error('Service Worker registration failed:', err);
+        });
+      });
+    }
+  </script>
+  
+</body>
+</html>
